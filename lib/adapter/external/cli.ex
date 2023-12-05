@@ -7,7 +7,7 @@ defmodule CLI do
     with {options, [directory], []} <- parsed,
          true <- File.dir?(directory),
          {:ok, files} <- list_files(directory) do
-      Enum.reduce(files, 0, fn file, size -> size + calculate_file_size(file) end)
+      Enum.reduce(files, 0, &(&2 + calculate_file_size(&1)))
       |> print_size(files, options)
     else
       _ ->
