@@ -1,5 +1,21 @@
 # ewbscp
 
+## Usage
+First, make sure you have `make` installed on your sistem. Then:
+
+```
+$ make help
+
+Usage:
+  make build                   - Builds project with Mix
+  make run <path> -- [<flags>] - Execute the compiled file and <path> doesn't have quotes
+  make zip <path> -- [<flags>] - Same as run, but it builds before running
+   || possible flags:
+   ||   --allow-empty :: Includes empty directories
+
+  make help                    - Shows this help
+```
+
 ## Architecture implementation
 ### Namespace convention
 
