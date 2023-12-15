@@ -1,10 +1,5 @@
 .PHONY: help build zip clean
 
-ifeq (zip,$(firstword $(MAKECMDGOALS)))
-  ZIP_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
-  $(eval $(ZIP_ARGS):;@:)
-endif
-
 help:
 	@echo "Commands:"
 	@echo "  make build - Mix project build"
@@ -17,13 +12,12 @@ build:
 	@echo "Building"
 	@mix escript.build
 
-zip: build
-	@./ewbscp $(ZIP_ARGS)
-	@$(MAKE) clean
+zip:
+	@./ewbscp $(filter-out $@,$(MAKECMDGOALS))
 
 clean:
 	@rm -rf _build/
 	@rm -rf ewbscp
 
 %:
-	@$(MAKE) help
+	@:
