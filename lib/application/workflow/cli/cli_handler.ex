@@ -1,5 +1,20 @@
 defmodule CLIHandler do
-  def handle_command(%CLICommand{command: directory, args: {_, options}}) do
+  def handle_command(%CLICommand{command: :directory_size, args: {files, options}}) do
+    handle_list_directory_size(files, options)
+  end
+
+  def handle_command(%CLICommand{command: :another_command, args: _}) do
+    IO.puts("Another command")
+  end
+
+  def handle_command(%CLICommand{}) do
+    IO.puts("Unknown command.")
+    IO.puts("Run 'make help' to see what you can do.")
+    System.halt(1)
+  end
+
+  defp handle_list_directory_size(files, options) do
+    directory = List.first(files)
     if File.dir?(directory) do
       case list_files(directory) do
         {:ok, files} ->

@@ -13,10 +13,12 @@ endif
 help:
 	@echo "Usage:"
 	@echo "  make build                   - Builds project with Mix"
-	@echo "  make run <path> -- [<flags>] - Execute the compiled file and <path> doesn't have quotes"
-	@echo "  make zip <path> -- [<flags>] - Same as run, but it builds before running"
-	@echo "   || possible flags:"
-	@echo "   ||   --allow-empty :: Includes empty directories"
+	@echo "  make run <command> <args>"
+	@echo "  make zip <command> <args>"
+	@echo "   || possible commands:"
+	@echo "   || >> directory_size <path> -- [<flags>] - Execute the compiled file and <path> doesn't have quotes"
+	@echo "   ||    <flags>:"
+	@echo "   ||      --allow-empty :: Includes empty directories"
 	@echo ""
 	@echo "  make help                    - Shows this help"
 
