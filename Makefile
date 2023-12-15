@@ -1,4 +1,4 @@
-.PHONY: help build zip
+.PHONY: help build zip clean
 
 ifeq (zip,$(firstword $(MAKECMDGOALS)))
   ZIP_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
@@ -8,8 +8,7 @@ endif
 help:
 	@echo "Commands:"
 	@echo "  make build - Mix project build"
-	@echo "  make run <cmd> <args> - Execute command with arguments"
-	@echo "  make zip <cmd> <args> - Zip using:"
+	@echo "  make zip <cmd> <args> - Runs commands based on this:"
 	@echo "   >> directory_size <path> -- [<flags>]"
 	@echo "      --allow-empty - Includes empty directories"
 	@echo "  make help - Display this message"
@@ -20,6 +19,11 @@ build:
 
 zip: build
 	@./ewbscp $(ZIP_ARGS)
+	@$(MAKE) clean
+
+clean:
+	@rm -rf _build/
+	@rm -rf ewbscp
 
 %:
 	@$(MAKE) help
