@@ -12,7 +12,7 @@ build:
 	@echo "Building"
 	@mix escript.build
 
-zip:
+zip: build
 	@./ewbscp $(filter-out $@,$(MAKECMDGOALS))
 
 clean:
