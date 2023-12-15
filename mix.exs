@@ -22,6 +22,7 @@ defmodule Ewbscp.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
+      {:tesla, "~> 1.8"},
       {:httpoison, "~> 2.0"},
       {:floki, "~> 0.35.0"}
     ]
