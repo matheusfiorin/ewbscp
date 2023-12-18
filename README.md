@@ -6,14 +6,12 @@ First, make sure you have `make` installed on your sistem. Then:
 ```
 $ make help
 
-Usage:
-  make build                   - Builds project with Mix
-  make run <path> -- [<flags>] - Execute the compiled file and <path> doesn't have quotes
-  make zip <path> -- [<flags>] - Same as run, but it builds before running
-   || possible flags:
-   ||   --allow-empty :: Includes empty directories
-
-  make help                    - Shows this help
+Commands:
+  make build - Mix project build
+  make zip <cmd> <args> - Runs commands based on this:
+   >> directory_size <path> -- [<flags>]
+      --allow-empty - Includes empty directories
+  make help - Display this message
 ```
 
 ## Architecture implementation
