@@ -23,7 +23,6 @@ defmodule Ewbscp.MixProject do
   defp deps do
     [
       {:tesla, "~> 1.8"},
-      {:httpoison, "~> 2.0"},
       {:floki, "~> 0.35.0"}
     ]
   end
