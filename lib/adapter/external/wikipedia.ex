@@ -11,6 +11,8 @@ defmodule Wikipedia do
         {:ok, body}
       {:error, reason} ->
         {:error, reason}
+      _ ->
+	{:error, :nu}
     end
   end
 end
