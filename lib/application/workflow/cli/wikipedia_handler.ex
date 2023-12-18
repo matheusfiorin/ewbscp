@@ -8,6 +8,7 @@ defmodule WikipediaHandler do
   defp fetch_wikipedia_page(uri, attempts) do
     case Wikipedia.fetch_content(uri) do
       {:ok, content} ->
+	ConcurrencyManager.adjust_concurrency(:wikipedia, :increase)
         ArticlePort.wikipedia_to_article(content)
 
       {:error, reason} ->
@@ -25,7 +26,7 @@ defmodule WikipediaHandler do
     unique_references = Enum.uniq(references)
     concurrency = ConcurrencyManager.get_concurrency(:wikipedia)
 
-    IO.puts("Max: #{concurrency}")
+    IO.puts("initial concurrency: #{concurrency}")
 
     Task.async_stream(
       unique_references,
