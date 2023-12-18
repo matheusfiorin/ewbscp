@@ -1,36 +1,36 @@
 defmodule WikipediaHandler do
-  # TODO - rethink handle naming
   def handle_wikipedia_article(uri) do
-    main_article = fetch_wikipedia_page(uri)
+    main_article = fetch_wikipedia_page(uri, 3)
     references = fetch_references(main_article.references)
-    IO.puts("refs: #{Enum.count(references)}")
+    IO.puts("fetched refs: #{Enum.count(references)}")
   end
 
-  defp fetch_wikipedia_page(uri) do
+  defp fetch_wikipedia_page(uri, attempts) do
     case Wikipedia.fetch_content(uri) do
-      {:ok, content} -> ArticlePort.wikipedia_to_article(content)
-      {:error, reason} ->
-	IO.puts("Error: #{reason}")
-    end
-  end
+      {:ok, content} ->
+        ArticlePort.wikipedia_to_article(content)
 
-  defp fetch_wikipedia_page_r(uri, attempts) do
-    case Wikipedia.fetch_content(uri) do
-      {:ok, content} -> ArticlePort.wikipedia_to_article(content)
       {:error, reason} ->
-	if(attempts > 0) do
-	  Process.sleep(1000)
-	  fetch_wikipedia_page_r(uri, attempts - 1)
-	else
-	  IO.puts("Error: #{reason}")
-	end
+        if attempts > 0 do
+          ConcurrencyManager.adjust_concurrency(:decrease)
+          :timer.sleep(500)
+          fetch_wikipedia_page(uri, attempts - 1)
+        else
+          IO.puts("Error: #{reason}")
+        end
     end
   end
 
   defp fetch_references(references) do
     unique_references = Enum.uniq(references)
+    max_concurrency = ConcurrencyManager.get_max_concurrency()
 
-    Task.async_stream(unique_references, fn uri -> fetch_wikipedia_page_r(uri, 3) end, max_concurrency: 500)
+    Task.async_stream(
+      unique_references,
+      fn uri -> fetch_wikipedia_page(uri, 3) end,
+      max_concurrency: max_concurrency,
+      timeout: 120_000
+    )
     |> Enum.to_list()
   end
 end

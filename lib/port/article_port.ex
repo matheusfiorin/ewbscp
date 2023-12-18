@@ -2,6 +2,7 @@ defmodule ArticlePort do
   def wikipedia_to_article(html) do
     article =
       html
+      |> Floki.parse_document()
       |> Floki.find(".mw-parser-output p")
       |> Enum.map(&Floki.text/1)
       |> Enum.join(" ")
@@ -15,7 +16,7 @@ defmodule ArticlePort do
       |> Enum.filter(&valid_reference?/1)
       |> Enum.map(&normalize_reference/1)
 
-    %Article{article: article, references: references}
+    %Article{article: article, references: Enum.take(references, 300)}
   end
 
   defp remove_square_bracket_contents(text) do
