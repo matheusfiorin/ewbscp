@@ -5,7 +5,7 @@ defmodule CLIHandler do
 
   def handle_command(%CLICommand{command: :fetch_wikipedia_page, args: {uri, _}}) do
     memory_before = :erlang.memory(:total)
-    ConcurrencyManager.start_link()
+    ConcurrencyManager.start_link(:wikipedia)
     WikipediaHandler.handle_wikipedia_article(uri)
     memory_after = :erlang.memory(:total)
 
