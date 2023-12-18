@@ -1,7 +1,7 @@
 # ewbscp
 
 ## Usage
-First, make sure you have `make` installed on your sistem. Then:
+First, make sure you have `make` installed on your system. Then:
 
 ```
 $ make help
@@ -10,7 +10,8 @@ Commands:
   make build - Mix project build
   make zip <cmd> <args> - Runs commands based on this:
    >> directory_size <path> -- [<flags>]
-      --allow-empty - Includes empty directories
+      |> --allow-empty - Includes empty directories
+   >> fetch_wikipedia_page <uri>
   make help - Display this message
 ```
 
