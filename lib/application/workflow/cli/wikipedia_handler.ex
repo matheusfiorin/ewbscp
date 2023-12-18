@@ -12,7 +12,7 @@ defmodule WikipediaHandler do
 
       {:error, reason} ->
         if attempts > 0 do
-          ConcurrencyManager.adjust_concurrency(:decrease)
+          ConcurrencyManager.adjust_concurrency(:wikipedia, :decrease)
           :timer.sleep(500)
           fetch_wikipedia_page(uri, attempts - 1)
         else
@@ -23,12 +23,14 @@ defmodule WikipediaHandler do
 
   defp fetch_references(references) do
     unique_references = Enum.uniq(references)
-    max_concurrency = ConcurrencyManager.get_max_concurrency()
+    concurrency = ConcurrencyManager.get_concurrency(:wikipedia)
+
+    IO.puts("Max: #{concurrency}")
 
     Task.async_stream(
       unique_references,
       fn uri -> fetch_wikipedia_page(uri, 3) end,
-      max_concurrency: max_concurrency,
+      concurrency: concurrency,
       timeout: 120_000
     )
     |> Enum.to_list()

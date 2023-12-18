@@ -1,40 +1,45 @@
 defmodule ConcurrencyManager do
   use GenServer
 
-  @initial_max_concurrency 100
-  @decrease_factor 0.8
-  @increase_factor 1.2
+  @initial_concurrency 100
   @min_concurrency 10
   @max_concurrency 200
 
-  def start_link() do
-    GenServer.start_link(__MODULE__, @initial_max_concurrency, name: __MODULE__)
+  @decrease_factor 0.8
+  @increase_factor 1.2
+
+  @spec start_link(atom()) :: GenServer.on_start()
+  def start_link(name) do
+    GenServer.start_link(__MODULE__, @initial_concurrency, name: name)
   end
 
-  def handle_call(:get_max_concurrency, _, max_concurrency) do
-    {:reply, max_concurrency, max_concurrency}
+  def get_concurrency(name) do
+    GenServer.call(name, :get_current_concurrency)
   end
 
-  def get_max_concurrency() do
-    GenServer.call(__MODULE__, :get_max_concurrency)
+  @spec calculate_adjustment(atom(), atom()) :: integer()
+  def calculate_adjustment(name, adjustment) do
+    state = GenServer.call(name, :get_current_concurrency)
+
+    case adjustment do
+      :increase -> state * @increase_factor
+      :decrease -> state * @decrease_factor
+      _ -> state
+    end
   end
 
-  def handle_cast({:adjust_concurrency, adjustment}, max_concurrency) do
-    new_concurrency = calculate_new_concurrency(max_concurrency, adjustment)
-    {:noreply, new_concurrency}
+  @impl true
+  def handle_info(_, state) do
+    {:noreply, state}
   end
 
-  defp adjust_concurrency(adjustment) do
-    GenServer.cast(__MODULE__, {:adjust_concurrency, adjustment})
+  @impl true
+  def handle_call(:get_current_concurrency, _, state) do
+    {:reply, state, state}
   end
 
-  defp calculate_new_concurrency(current, :increase) do
-    new_concurrency = round(current * @increase_factor)
-    min(@max_concurrency, new_concurrency)
-  end
-
-  defp calculate_new_concurrency(current, :decrease) do
-    new_concurrency = round(current * @decrease_factor)
-    max(@min_concurrency, new_concurrency)
+  @impl true
+  def handle_cast(name, adjustment) do
+    {:noreply, calculate_adjustment(name, adjustment)}
   end
 end
