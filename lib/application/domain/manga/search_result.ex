@@ -1,4 +1,4 @@
-defmodule Ewbscp.Application.Domain.Manga.Manga do
+defmodule Ewbscp.Application.Domain.Manga.SearchResult do
   @type t :: %__MODULE__{
           manga_uri: String.t(),
           manga_title: String.t()
