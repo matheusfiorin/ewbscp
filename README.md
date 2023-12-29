@@ -1,6 +1,6 @@
 # ewbscp
 
-## Usage
+## CLI Usage
 First, make sure you have `make` installed on your system. Then:
 
 ```
@@ -15,41 +15,64 @@ Commands:
   make help - Display this message
 ```
 
-## Architecture implementation
-### Namespace convention
+## Architecture
+
+![architecture diagram](references/architecture.jpg)
+
+## Concepts & Responsibilities
+
+![concepts and responsibilities diagram](references/concepts.jpg)
+
+## Folder structure
 
 ```
-import application.workflow.articles.article
+.
+├── /entrypoints/
+│   └── /cli/
+│       └── cli_input.ex
+├── /port/
+│   └── /workflow/
+│       └── /articles/
+│           ├── /external/
+│           │   └── cli_to_article.ex
+│           ├── /internal/
+│           │   └── title_to_article.ex
+│           └── /models/
+│               └── article_input.ex
+├── /domain/
+│   ├── /workflow/
+│   │   └── /articles/
+│   │       ├── orchestrator.ex
+│   │       ├── fetch_main_page.ex
+│   │       └── fetch_references.ex
+│   └── /entities/
+│       └── /article/
+│           ├── article.ex
+│           └── reference.ex
+└── /clients/
+    └── /article/
+        └── article_client.ex
 ```
 
-### Folder structure
+### Example call flow from CLI
 
 ```
--   /application
-    -   /workflow
-        -   /articles
-            -   article.ex (orchestrates things to fetch an article)
-        -   /mangas
-            -   manga.ex
-    -   /domain
-        -   content.ex (represents a content)
-        -   page.ex    (represents a web page)
-        -   manga.ex   (represents a manga :tophat:)
-        -   scraper.ex (represents a scraper client)
-        -   article.ex
-        -   *.ex       (models)
--   /port
-    -   article.ex (get_article)
-    -   cli.ex (get_article)
--   /adapter
-    -   /external
-        -   wikipedia.ex (makes a http call)
-        -   wordpress.ex (makes a http call)
-        -   cli.ex       (handles cli interaction)
-        -   ...
-    -   /internal
-        -   wikipedia_handler.ex
-        -   wordpress_handler.ex
-        -   cli_handler.ex
-        -   ...
+user
+  ↓
+cli_input.ex         | handles the action inputted
+  ↓
+cli_to_article.ex    | handles the transformation between external and internal
+  ↓
+orchestrator.ex      | handles external calls to return a domain entity
+  ↓
+title_to_article.ex  | handles how to fetch an external content and return to domain as an entity
+  ↓
+article_client.ex    | handles http calls
+  |
+  ↑
+user (response)
 ```
+
+This representations assumes that the user receives the result from
+cli_input.ex (entrypoint), but assuming that is a black box. Then,
+cli_input.ex depends on the cli_to_article.ex response, and so on.
