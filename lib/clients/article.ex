@@ -1,15 +1,12 @@
-defmodule WikipediaHandler do
-  def handle_wikipedia_article(uri) do
-    main_article = fetch_wikipedia_page(uri, 3)
-    references = fetch_references(main_article.references)
-    IO.puts("fetched refs: #{Enum.count(references)}")
-  end
+defmodule Ewbscp.Clients.Article do
+  alias Ewbscp.Domain.Workflow.Concurrency.Manager, as: ConcurrencyManager
+  alias Ewbscp.Clients.HTTP.Wikipedia, as: WikipediaClient
 
-  defp fetch_wikipedia_page(uri, attempts) do
-    case Wikipedia.fetch_content(uri) do
+  def fetch_wikipedia_page(uri, attempts) do
+    case WikipediaClient.fetch_content(uri) do
       {:ok, content} ->
-	ConcurrencyManager.adjust_concurrency(:wikipedia, :increase)
-        ArticlePort.wikipedia_to_article(content)
+        ConcurrencyManager.adjust_concurrency(:wikipedia, :increase)
+        content
 
       {:error, reason} ->
         if attempts > 0 do
@@ -22,10 +19,11 @@ defmodule WikipediaHandler do
     end
   end
 
-  defp fetch_references(references) do
+  def fetch_references(references) do
     unique_references = Enum.uniq(references)
     concurrency = ConcurrencyManager.get_concurrency(:wikipedia)
 
+    IO.puts("initial references: #{Enum.count(unique_references)}")
     IO.puts("initial concurrency: #{concurrency}")
 
     Task.async_stream(

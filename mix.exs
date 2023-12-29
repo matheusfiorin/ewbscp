@@ -8,7 +8,7 @@ defmodule Ewbscp.MixProject do
       elixir: "~> 1.15",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      escript: [main_module: CLI]
+      escript: [main_module: Ewbscp.Entrypoints.CLI.Input]
     ]
   end
 

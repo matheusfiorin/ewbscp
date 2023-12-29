@@ -1,4 +1,4 @@
-defmodule Wikipedia do
+defmodule Ewbscp.Clients.HTTP.Wikipedia do
   use Tesla
 
   plug Tesla.Middleware.FollowRedirects
