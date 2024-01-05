@@ -1,4 +1,4 @@
-defmodule ConcurrencyManager do
+defmodule Ewbscp.Domain.Workflow.Concurrency.Manager do
   use GenServer
 
   @initial_concurrency 100
